@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language Learning App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-color: #2c3e50; /* Темний фон */
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    
+    #app {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+    }
+
+    select, button, input {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #word-card {
+      margin: 20px auto;
+      padding: 20px;
+      border: 2px solid #333;
+      background-color: #f9f9f9;
+      color: black;
+      width: 300px;
+      font-size: 24px;
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out;
+      border-radius: 8px;
+    }
+
+    #statistics p {
+      font-size: 16px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h1>Контроль знань іноземної мови</h1>
+    <label for="difficulty-level">Оберіть рівень складності:</label>
+    <select id="difficulty-level">
+      <option value="easy">Легкий</option>
+      <option value="medium">Середній</option>
+      <option value="hard">Складний</option>
+    </select>
+    <button id="start-test">Почати тест</button>
+    <div id="test-area">
+      <div id="word-card">
+        <h2 id="current-word"></h2>
+      </div>
+      <input type="text" id="answer" placeholder="Введіть переклад">
+      <button id="check-answer">Перевірити</button>
+      <div id="statistics">
+        <p>Прогрес: <span id="progress">0</span>/10</p>
+        <p>Вірно: <span id="correct-count">0</span></p>
+        <p>Невірно: <span id="incorrect-count">0</span></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+ $(document).ready(function () {
+  const easyWords = [
+    { word: "car", translation: "машина" },
+    { word: "dog", translation: "собака" },
+    { word: "cat", translation: "кіт" },
+    { word: "house", translation: "будинок" },
+    { word: "tree", translation: "дерево" },
+    { word: "apple", translation: "яблуко" },
+    { word: "sun", translation: "сонце" },
+    { word: "book", translation: "книга" },
+    { word: "water", translation: "вода" },
+    { word: "fire", translation: "вогонь" }
+  ];
+
+  const mediumWords = [
+    { word: "radio", translation: "радіо" },
+    { word: "hurricane", translation: "ураган" },
+    { word: "crown", translation: "корона" },
+    { word: "strawberry", translation: "полуниця" },
+    { word: "kitchen", translation: "кухня" },
+    { word: "garden", translation: "сад" },
+    { word: "travel", translation: "подорож" },
+    { word: "bicycle", translation: "велосипед" },
+    { word: "mountain", translation: "гора" },
+    { word: "forest", translation: "ліс" }
+  ];
+
+  const hardWords = [
+    { word: "philosophy", translation: "філософія" },
+    { word: "psychology", translation: "психологія" },
+    { word: "astronomy", translation: "астрономія" },
+    { word: "architecture", translation: "архітектура" },
+    { word: "engineering", translation: "інженерія" },
+    { word: "chemistry", translation: "хімія" },
+    { word: "biology", translation: "біологія" },
+    { word: "geography", translation: "географія" },
+    { word: "democracy", translation: "демократія" },
+    { word: "constitution", translation: "конституція" }
+  ];
+
+  let currentWords = [];
+  let currentIndex = 0;
+  let correctCount = 0;
+  let incorrectCount = 0;
+
+  function updateStatistics() {
+    $("#progress").text(currentIndex);
+    $("#correct-count").text(correctCount);
+    $("#incorrect-count").text(incorrectCount);
+  }
+
+  function startTest() {
+    const level = $("#difficulty-level").val();
+    switch (level) {
+      case "easy":
+        currentWords = [...easyWords];
+        break;
+      case "medium":
+        currentWords = [...mediumWords];
+        break;
+      case "hard":
+        currentWords = [...hardWords];
+        break;
+    }
+
+    currentWords = currentWords.slice(0, 10).sort(() => Math.random() - 0.5);
+    currentIndex = 0;
+    correctCount = 0;
+    incorrectCount = 0;
+
+    $("#word-card").text(currentWords[currentIndex].word);
+    updateStatistics();
+  }
+
+  function checkAnswer() {
+    const userAnswer = $("#answer").val().trim().toLowerCase();
+    if (userAnswer === currentWords[currentIndex].translation.toLowerCase()) {
+      correctCount++;
+    } else {
+      incorrectCount++;
+    }
+
+    currentIndex++;
+    if (currentIndex < 10) {
+      $("#word-card").text(currentWords[currentIndex].word);
+    } else {
+      alert("Тест завершено!");
+      startTest();
+    }
+    updateStatistics();
+    $("#answer").val("");
+  }
+
+  $("#start-test").click(function () {
+    startTest();
+  });
+
+  $("#check-answer").click(function () {
+    checkAnswer();
+  });
+
+  $("#answer").keydown(function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); 
+      checkAnswer();
+    }
+  });
+});
+
+  </script>
+</body>
+</html>
